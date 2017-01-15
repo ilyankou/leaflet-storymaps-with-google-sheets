@@ -82,8 +82,8 @@ $(window).on('load', function() {
     var imageContainerMargin = 70;
 
     document.title = getSetting('_mapTitle');
-    $('#title h3').html(getSetting('_mapTitle'));
-    $('#title small').html(getSetting('_mapSubtitle'));
+    $('#title').append('<h3>' + getSetting('_mapTitle') + '</h3>');
+    $('#title').append('<small>' + getSetting('_mapSubtitle') + '</small>');
 
     // Load tiles
     addBaseMap();

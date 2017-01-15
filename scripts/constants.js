@@ -13,5 +13,4 @@ var constants = {
 	// Map Settings
 	_tileProvider: 'Basemap Tiles',
 	_zoomControls: 'Zoom Controls',
-  _imgMargin: 'Image Container Margin'
 };
