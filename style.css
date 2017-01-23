@@ -73,15 +73,15 @@ h3 {
     margin-bottom: 0px;
 }
 
-.image-container {
-    /* margin + padding = imageContainerMargin in script.js */
+.chapter-container {
+    /* margin + padding = chapterContainerMargin in script.js */
     /* Important for scrolling! */
     margin: 50px 0 0 0;
     padding: 20px 0 0 0;
     text-align: center;
 }
 
-.image-container img {
+.chapter-container img {
     height: auto;
     width: auto;
     max-height: 100%;
@@ -95,7 +95,7 @@ h3 {
     transform: translateY(-50%);
 }
 
-.img-holder {
+.img-container {
     margin: 0px;
     height: 200px;
     max-height: 200px;

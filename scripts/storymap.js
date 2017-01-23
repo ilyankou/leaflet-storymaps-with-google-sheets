@@ -79,7 +79,16 @@ $(window).on('load', function() {
     var options = mapData.sheets(constants.optionsSheetName).elements;
     createDocumentSettings(options);
 
-    var imageContainerMargin = 70;
+    /* Change narrative width */
+    narrativeWidth = parseInt(getSetting('_narrativeWidth'));
+    if (narrativeWidth > 0 && narrativeWidth < 100) {
+      var mapWidth = 100 - narrativeWidth;
+
+      $('#narration, #title').css('width', narrativeWidth + 'vw');
+      $('#map').css('width', mapWidth + 'vw');
+    }
+
+    var chapterContainerMargin = 70;
 
     document.title = getSetting('_mapTitle');
     $('#title').append('<h3>' + getSetting('_mapTitle') + '</h3>');
@@ -130,16 +139,16 @@ $(window).on('load', function() {
 
       var container = $('<div></div>', {
         id: 'container' + i,
-        class: 'image-container'
+        class: 'chapter-container'
       });
 
-      var imgHolder = $('<div></div', {
-        class: 'img-holder'
+      var imgContainer = $('<div></div', {
+        class: 'img-container'
       }).append(image);
 
       container
         .append('<p class="chapter-header">' + c['Chapter'] + '</p>')
-        .append(imgHolder)
+        .append(imgContainer)
         .append(source)
         .append('<p class="description">' + c['Description'] + '</p>');
 
@@ -148,17 +157,26 @@ $(window).on('load', function() {
 
     changeAttribution();
 
+    /* Change image container heights */
+    imgContainerHeight = parseInt(getSetting('_imgContainerHeight'));
+    if (imgContainerHeight > 0) {
+      $('.img-container').css({
+        'height': imgContainerHeight + 'px',
+        'max-height': imgContainerHeight + 'px',
+      });
+    }
+
     // Calculate heights
     pixelsAbove[0] = -100;
     for (i = 1; i < chapters.length; i++) {
-      pixelsAbove[i] = pixelsAbove[i-1] + $('div#container' + (i-1)).height() + imageContainerMargin;
+      pixelsAbove[i] = pixelsAbove[i-1] + $('div#container' + (i-1)).height() + chapterContainerMargin;
     }
     pixelsAbove.push(Number.MAX_VALUE);
 
     $('div#contents').scroll(function() {
       for (i = 0; i < pixelsAbove.length - 1; i++) {
-        if ($(this).scrollTop() >= pixelsAbove[i] && $(this).scrollTop() < (pixelsAbove[i+1] - 2 * imageContainerMargin)) {
-          $('.image-container').removeClass("inFocus").addClass("outFocus");
+        if ($(this).scrollTop() >= pixelsAbove[i] && $(this).scrollTop() < (pixelsAbove[i+1] - 2 * chapterContainerMargin)) {
+          $('.chapter-container').removeClass("inFocus").addClass("outFocus");
           $('div#container' + i).addClass("inFocus").removeClass("outFocus");
           map.flyTo([chapters[i]['Longitude'], chapters[i]['Latitude']], chapters[i]['Zoom']);
         }
