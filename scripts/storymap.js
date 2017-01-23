@@ -177,6 +177,10 @@ $(window).on('load', function() {
       bounds.push(markers[i].getLatLng());
     }
     map.fitBounds(bounds);
+
+    $('#map, #narration, #title').css('visibility', 'visible');
+    $('div.loader').css('visibility', 'hidden');
+
     $('div#contents').animate({scrollTop: '1px'});
   }
 
