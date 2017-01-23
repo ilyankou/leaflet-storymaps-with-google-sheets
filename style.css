@@ -128,13 +128,10 @@ h3 {
 
 .in-focus {
     opacity: 1.0;
-    /*background-color: #f0f0f0; */
 }
 
 .out-focus {
     opacity: 0.3;
-    /*background-color:hsl(180, 0%, 100%);
-    /* background-color: white; */
 }
 
 @media only screen and (max-device-width: 480px) {
