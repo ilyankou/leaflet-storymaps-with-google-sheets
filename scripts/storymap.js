@@ -176,15 +176,46 @@ $(window).on('load', function() {
     $('div#contents').scroll(function() {
       for (i = 0; i < pixelsAbove.length - 1; i++) {
         if ($(this).scrollTop() >= pixelsAbove[i] && $(this).scrollTop() < (pixelsAbove[i+1] - 2 * chapterContainerMargin)) {
-          $('.chapter-container').removeClass("inFocus").addClass("outFocus");
-          $('div#container' + i).addClass("inFocus").removeClass("outFocus");
+          $('.chapter-container').removeClass("in-focus").addClass("out-focus");
+          $('div#container' + i).addClass("in-focus").removeClass("out-focus");
           map.flyTo([chapters[i]['Longitude'], chapters[i]['Latitude']], chapters[i]['Zoom']);
         }
       }
     });
 
-    $('div#container0').addClass("inFocus");
-    $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
+    $('#contents').append(" \
+      <div id='space-at-the-bottom'> \
+        <a href='#space-at-the-top'>  \
+          <i class='fa fa-chevron-up'></i></br> \
+          <small>Top</small>  \
+        </a> \
+      </div> \
+    ");
+
+    /* Generate a CSS sheet with cosmetic changes */
+    $("<style>")
+      .prop("type", "text/css")
+      .html("\
+      #narration, #title {\
+        background-color: " + trySetting('_narrativeBackground', 'white') + "; \
+        color: " + trySetting('_narrativeText', 'black') + "; \
+      }\
+      a, a:visited, a:hover {\
+        color: " + trySetting('_narrativeLink', 'blue') + " \
+      }\
+      .in-focus {\
+        background-color: " + trySetting('_narrativeActive', '#f0f0f0') + " \
+      }")
+      .appendTo("head");
+
+
+    endPixels = parseInt(getSetting('_pixelsAfterFinalChapter'));
+    if (endPixels > 100) {
+      $('#space-at-the-bottom').css({
+        'height': (endPixels / 2) + 'px',
+        'padding-top': (endPixels / 2) + 'px',
+      });
+    }
 
     var bounds = [];
     for (i in markers) {
@@ -198,6 +229,8 @@ $(window).on('load', function() {
 
     $('#map, #narration, #title').css('visibility', 'visible');
     $('div.loader').css('visibility', 'hidden');
+
+    $('div#container0').addClass("in-focus");
 
     $('div#contents').animate({scrollTop: '1px'});
   }
