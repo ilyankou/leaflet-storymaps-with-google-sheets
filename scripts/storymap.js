@@ -117,11 +117,6 @@ $(window).on('load', function() {
 
       markers.push(marker);
 
-      var chapter = $('<p></p>', {
-        text: c['Chapter'],
-        class: 'chapter-header'
-      });
-
       var image = $('<img>', {
         src: c['Image Link'],
       });
@@ -133,11 +128,6 @@ $(window).on('load', function() {
         class: 'source'
       });
 
-      var description = $('<p></p>', {
-        text: c['Description'],
-        class: 'description'
-      });
-
       var container = $('<div></div>', {
         id: 'container' + i,
         class: 'image-container'
@@ -145,10 +135,14 @@ $(window).on('load', function() {
 
       var imgHolder = $('<div></div', {
         class: 'img-holder'
-      });
+      }).append(image);
 
-      imgHolder.append(image);
-      container.append(chapter).append(imgHolder).append(source).append(description);
+      container
+        .append('<p class="chapter-header">' + c['Chapter'] + '</p>')
+        .append(imgHolder)
+        .append(source)
+        .append('<p class="description">' + c['Description'] + '</p>');
+
       $('#contents').append(container);
     }
 
