@@ -79,7 +79,16 @@ $(window).on('load', function() {
     var options = mapData.sheets(constants.optionsSheetName).elements;
     createDocumentSettings(options);
 
-    var imageContainerMargin = 70;
+    /* Change narrative width */
+    narrativeWidth = parseInt(getSetting('_narrativeWidth'));
+    if (narrativeWidth > 0 && narrativeWidth < 100) {
+      var mapWidth = 100 - narrativeWidth;
+
+      $('#narration, #title').css('width', narrativeWidth + 'vw');
+      $('#map').css('width', mapWidth + 'vw');
+    }
+
+    var chapterContainerMargin = 70;
 
     document.title = getSetting('_mapTitle');
     $('#title').append('<h3>' + getSetting('_mapTitle') + '</h3>');
@@ -117,11 +126,6 @@ $(window).on('load', function() {
 
       markers.push(marker);
 
-      var chapter = $('<p></p>', {
-        text: c['Chapter'],
-        class: 'chapter-header'
-      });
-
       var image = $('<img>', {
         src: c['Image Link'],
       });
@@ -133,46 +137,85 @@ $(window).on('load', function() {
         class: 'source'
       });
 
-      var description = $('<p></p>', {
-        text: c['Description'],
-        class: 'description'
-      });
-
       var container = $('<div></div>', {
         id: 'container' + i,
-        class: 'image-container'
+        class: 'chapter-container'
       });
 
-      var imgHolder = $('<div></div', {
-        class: 'img-holder'
-      });
+      var imgContainer = $('<div></div', {
+        class: 'img-container'
+      }).append(image);
 
-      imgHolder.append(image);
-      container.append(chapter).append(imgHolder).append(source).append(description);
+      container
+        .append('<p class="chapter-header">' + c['Chapter'] + '</p>')
+        .append(imgContainer)
+        .append(source)
+        .append('<p class="description">' + c['Description'] + '</p>');
+
       $('#contents').append(container);
     }
 
     changeAttribution();
 
+    /* Change image container heights */
+    imgContainerHeight = parseInt(getSetting('_imgContainerHeight'));
+    if (imgContainerHeight > 0) {
+      $('.img-container').css({
+        'height': imgContainerHeight + 'px',
+        'max-height': imgContainerHeight + 'px',
+      });
+    }
+
     // Calculate heights
     pixelsAbove[0] = -100;
     for (i = 1; i < chapters.length; i++) {
-      pixelsAbove[i] = pixelsAbove[i-1] + $('div#container' + (i-1)).height() + imageContainerMargin;
+      pixelsAbove[i] = pixelsAbove[i-1] + $('div#container' + (i-1)).height() + chapterContainerMargin;
     }
     pixelsAbove.push(Number.MAX_VALUE);
 
     $('div#contents').scroll(function() {
       for (i = 0; i < pixelsAbove.length - 1; i++) {
-        if ($(this).scrollTop() >= pixelsAbove[i] && $(this).scrollTop() < (pixelsAbove[i+1] - 2 * imageContainerMargin)) {
-          $('.image-container').removeClass("inFocus").addClass("outFocus");
-          $('div#container' + i).addClass("inFocus").removeClass("outFocus");
+        if ($(this).scrollTop() >= pixelsAbove[i] && $(this).scrollTop() < (pixelsAbove[i+1] - 2 * chapterContainerMargin)) {
+          $('.chapter-container').removeClass("in-focus").addClass("out-focus");
+          $('div#container' + i).addClass("in-focus").removeClass("out-focus");
           map.flyTo([chapters[i]['Longitude'], chapters[i]['Latitude']], chapters[i]['Zoom']);
         }
       }
     });
 
-    $('div#container0').addClass("inFocus");
-    $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
+    $('#contents').append(" \
+      <div id='space-at-the-bottom'> \
+        <a href='#space-at-the-top'>  \
+          <i class='fa fa-chevron-up'></i></br> \
+          <small>Top</small>  \
+        </a> \
+      </div> \
+    ");
+
+    /* Generate a CSS sheet with cosmetic changes */
+    $("<style>")
+      .prop("type", "text/css")
+      .html("\
+      #narration, #title {\
+        background-color: " + trySetting('_narrativeBackground', 'white') + "; \
+        color: " + trySetting('_narrativeText', 'black') + "; \
+      }\
+      a, a:visited, a:hover {\
+        color: " + trySetting('_narrativeLink', 'blue') + " \
+      }\
+      .in-focus {\
+        background-color: " + trySetting('_narrativeActive', '#f0f0f0') + " \
+      }")
+      .appendTo("head");
+
+
+    endPixels = parseInt(getSetting('_pixelsAfterFinalChapter'));
+    if (endPixels > 100) {
+      $('#space-at-the-bottom').css({
+        'height': (endPixels / 2) + 'px',
+        'padding-top': (endPixels / 2) + 'px',
+      });
+    }
 
     var bounds = [];
     for (i in markers) {
@@ -183,6 +226,12 @@ $(window).on('load', function() {
       bounds.push(markers[i].getLatLng());
     }
     map.fitBounds(bounds);
+
+    $('#map, #narration, #title').css('visibility', 'visible');
+    $('div.loader').css('visibility', 'hidden');
+
+    $('div#container0').addClass("in-focus");
+
     $('div#contents').animate({scrollTop: '1px'});
   }
 
