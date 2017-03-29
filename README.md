@@ -4,7 +4,7 @@ Leaflet storymap with scroll-driven navigation for narrative and point markers f
 ## BETA version -- still in development
 
 ## Links (replace with your own)
-- Map http://jackdougherty.github.io/leaflet-storymaps-with-google-sheets/index.html
+- Map (currently broken) http://jackdougherty.github.io/leaflet-storymaps-with-google-sheets/index.html
 - Google Sheets template https://docs.google.com/spreadsheets/d/14beE0recOwCHhemG8ufEDUph89FC4xrXH4ptm8wF6mY
 
 ## Credits
